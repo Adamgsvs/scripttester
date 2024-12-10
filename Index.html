@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML Script Viewer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #007bff, #6c757d);
+            color: white;
+        }
+
+        #editor-container {
+            width: 90%;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 200px;
+            border: none;
+            border-radius: 8px;
+            padding: 15px;
+            box-sizing: border-box;
+            font-family: monospace;
+            font-size: 16px;
+            background: #f8f9fa;
+            color: #333;
+            resize: vertical;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        textarea:focus {
+            outline: none;
+            border: 2px solid #007bff;
+        }
+
+        iframe {
+            width: 100%;
+            height: 400px;
+            border: none;
+            border-radius: 8px;
+            background: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .button-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background: white;
+            border: none;
+            color: #007bff;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease-in-out;
+        }
+
+        button:hover {
+            background: #0056b3;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="editor-container">
+        <textarea id="html-code" placeholder="اكتب كود HTML هنا..."></textarea>
+        <div class="button-container">
+            <button id="update-preview">تحديث العرض</button>
+            <button id="save-file">حفظ كـ index.html</button>
+            <button id="go-to-site">انتقال إلى الموقع</button>
+            <button id="clear-code">مسح الكود</button>
+            <button id="load-example">تحميل مثال</button>
+        </div>
+        <iframe id="preview"></iframe>
+    </div>
+
+    <script>
+        const htmlCode = document.getElementById("html-code");
+        const preview = document.getElementById("preview");
+        const updateButton = document.getElementById("update-preview");
+        const saveButton = document.getElementById("save-file");
+        const goToSiteButton = document.getElementById("go-to-site");
+        const clearButton = document.getElementById("clear-code");
+        const loadExampleButton = document.getElementById("load-example");
+
+        // تحديث العرض عند النقر على الزر
+        updateButton.addEventListener("click", () => {
+            const code = htmlCode.value;
+            preview.srcdoc = code;
+        });
+
+        // حفظ كود HTML كملف index.html
+        saveButton.addEventListener("click", () => {
+            const code = htmlCode.value;
+            const blob = new Blob([code], { type: "text/html" });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "index.html";
+            link.click();
+        });
+
+        // الانتقال إلى الموقع الذي في الكود
+        goToSiteButton.addEventListener("click", () => {
+            const code = htmlCode.value;
+            const blob = new Blob([code], { type: "text/html" });
+            const url = URL.createObjectURL(blob);
+            window.open(url, "_blank"); // فتح الموقع في نافذة جديدة
+        });
+
+        // مسح الكود من خانة النص
+        clearButton.addEventListener("click", () => {
+            htmlCode.value = "";
+            preview.srcdoc = "";
+        });
+
+        // تحميل مثال HTML جاهز
+        loadExampleButton.addEventListener("click", () => {
+            const example = `
+<!DOCTYPE html>
+<html>
+<head>
+    <title>مثال HTML</title>
+</head>
+<body>
+    <h1>مرحبًا بك في صفحة العرض</h1>
+    <p>هذا مثال بسيط على صفحة HTML.</p>
+    <a href="https://example.com" target="_blank">زر موقعنا</a>
+</body>
+</html>`;
+            htmlCode.value = example;
+            preview.srcdoc = example;
+        });
+
+        // تحديث العرض تلقائيًا عند الكتابة
+        htmlCode.addEventListener("input", () => {
+            preview.srcdoc = htmlCode.value;
+        });
+    </script>
+
+</body>
+</html>
